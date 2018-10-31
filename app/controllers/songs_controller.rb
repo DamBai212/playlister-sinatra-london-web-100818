@@ -1,26 +1,22 @@
-class SongController < ApplicationController
-
-
-    get 'song/new' do
-        erb ':songs/index'
-    end
-
-    post 'song/show' do
-        Song.create(params)
-        erb ':songs/show'
-    end
+class SongsController < ApplicationController
 
     get '/songs' do
-        erb ':songs/show'
+        @songs = Song.all
+        erb :'/songs/index'
     end
 
-
-    get '/song/edit' do
-        erb ':songs/edit'
+    get '/songs/new' do
+        erb :'/songs/new'
     end
-    
-    get '/song/index' do
-        erb ':songs/index'
+
+    get '/songs/:slug' do
+        @song = Song.find(params[:slug])
+        erb :'/songs/:slug'
+    end
+
+    get '/songs/:slug/edit' do
+        Song.update(params[:slug], params)
+        erb :'/songs/:slug/edit'
     end
 
 end

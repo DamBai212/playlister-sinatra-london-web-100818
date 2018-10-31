@@ -1,16 +1,13 @@
 class GenresController < ApplicationController
 
-    get '/genres/index' do
-        erb ':genres/index'
-    end
-
-    post 'genre/show' do
-        Genre.create(params)
-        erb ':genres/show'
-    end
-
     get '/genres' do
-        erb ':genres/show'
+        @genres = Genre.all
+        erb :'/genres/index'
+    end
+
+    get '/genres/:slug' do
+        @genre = Genre.find(params[:slug])
+        erb :'/genres/:slug'
     end
 
 end
