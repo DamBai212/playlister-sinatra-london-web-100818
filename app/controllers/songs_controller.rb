@@ -1,60 +1,40 @@
 class SongsController < ApplicationController
 
-get '/songs' do
-   @songs = Song.all
-   erb :'/songs/index'
- end
+  get '/songs' do
+    @songs = Song.all
+    erb :'/songs/index'
+  end
 
- get '/songs/new' do
-   erb :'/songs/new'
- end
+  get '/songs/new' do
+    erb :'/songs/new'
+  end
 
- get '/songs/:slug' do
-   @song = Song.find_by_slug(params[:slug])
-   erb :'songs/show'
- end
 
- post '/songs' do
-   @song = Song.create(:name => params["Name"])
-   @song.artist = Artist.find_or_create_by(:name => params["Artist Name"])
-   @song.genre_ids = params[:genres]
-   @song.save
+  get '/songs/:slug' do
+    @song = Song.find_by_slug(params[:slug])
+    erb :'songs/show'
+  end
 
-   erb :'songs/show', locals: {message: "Successfully created song."}
- end
+  post '/songs' do
+    artist = Artist.find_or_create_by(:name => params[:artist][:name])
+    @song = Song.create(params[:song])
+    artist.songs << @song
+    redirect "/songs/#{@song.slug}"
+  end
 
- get '/songs/:slug/edit' do
-   @song = Song.find_by_slug(params[:slug])
-    get '/songs' do
-        @songs = Song.all
-        erb :'/songs/index'
-    end
+  get '/songs/:slug/edit' do
+    @song = Song.find_by_slug(params[:slug])
+    erb :'/songs/edit'
+  end
 
-    get '/songs/new' do
-        erb :'/songs/new'
-    end
+  patch '/songs/:slug' do
+    @song = Song.find_by_slug(params[:slug])
+    
+    @song.update(params[:song])
 
-    get '/songs/:slug' do
-        @song = Song.find(params[:slug])
-        erb :'/songs/:slug'
-    end
+    @song.artist = Artist.find_or_create_by(name: params[:artist][:name])
+    @song.save
 
-    get '/songs/:slug/edit' do
-        Song.update(params[:slug], params)
-        erb :'/songs/:slug/edit'
-    end
-
-   erb :'songs/edit'
- end
-
- patch '/songs/:slug' do
-   @song = Song.find_by_slug(params[:slug])
-   
-   @song.update(params[:song])
-
-   @song.artist = Artist.find_or_create_by(name: params[:artist][:name])
-   @song.save
-
-   erb :'songs/show', locals: {message: "Song successfully updated."}
- end
+    erb :'songs/show', locals: {message: "Song successfully updated."}
+  end
 end
