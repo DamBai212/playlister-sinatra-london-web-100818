@@ -7,9 +7,5 @@ class ApplicationController < Sinatra::Base
     erb :index
   end
 
-    get '/artists' do
-      erb ':artists/index'
-    end
-
 
 end
